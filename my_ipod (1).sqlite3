@@ -1,0 +1,65 @@
+SELECT * FROM artists; --We selected everything: all columns and all rows. 
+SELECT name FROM songs;	--We selected one column and all rows. 
+SELECT 
+	id, 
+	name, 
+	created_at 
+FROM songs; --You get the idea!
+
+SELECT * FROM songs WHERE length < '5:00'; 
+--We selected only those rows with songs that are less than five minutes. 
+
+SELECT * FROM User WHERE LastName IN ('Jordan', 'Brown', 'Ashley', 'Carnegie'); 
+
+SELECT * FROM User WHERE FirstName = 'Wesley' AND LastName = 'Chambers';
+SELECT * FROM User WHERE FirstName = 'Wesley' OR LastName = 'Jordan'; 
+--Note the difference between these first two SELECT statements.
+
+SELECT * FROM User WHERE UserID > 1 OR (UpdatedAt IS NULL AND FirstName = 'Florence');
+
+SELECT * FROM User WHERE FirstName LIKE '%ley';
+SELECT * FROM User WHERE FirstName LIKE '%esl%';
+SELECT * FROM User WHERE FirstName LIKE '%sle%' OR LastName LIKE 'Jor%';
+
+SELECT * FROM artists WHERE id >= 1 AND id <= 6;
+
+SELECT * FROM songs WHERE name GLOB 'Man*'; 
+--the '*' means any amount of character or number
+
+SELECT * FROM songs WHERE name GLOB '*Know';
+
+SELECT * FROM songs WHERE name GLOB '*ake*';
+
+SELECT * FROM songs WHERE name GLOB '*8*';
+
+SELECT * FROM songs WHERE name GLOB '??? Learn'; 
+--the question mark means exactly one character or number
+
+SELECT * FROM songs WHERE name GLOB '*Mary*';
+
+SELECT * FROM songs WHERE name GLOB '?ove???';
+
+UPDATE artists SET name = 'Janet Jackson' WHERE name LIKE 'janet Jackson';
+
+UPDATE User 
+SET FirstName = 'Wesley A.',
+	LastName = 'Chambers IV',
+	UpdatedAt = CURRENT_TIMESTAMP
+WHERE UserID = 1;
+
+BEGIN TRANSACTION;
+	UPDATE User SET FirstName = 'Hey, change my name me back!';
+    SELECT * FROM User;
+ROLLBACK;
+
+SELECT * FROM User;
+
+
+
+BEGIN TRANSACTION;
+    DELETE FROM songs WHERE id BETWEEN 5 AND 10;
+
+    SELECT * FROM songs WHERE id < 11; 
+    --See that record 5-10 would have been deleted if the rollback had not occurred.
+
+ROLLBACK;
