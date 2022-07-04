@@ -282,3 +282,213 @@ values ('d010', 'Business Analysis');
 
 select*from departments
 order by dept_name asc;
+
+select*from employees
+limit 10;
+
+insert into employees
+(
+	emp_no, birth_date, first_name, last_name, gender, hire_date)
+Values (999901, '1986-04-21', 'Mack', 'James', 'M', '2000-01-01');
+
+select*from employees
+order by emp_no DESC;
+
+select*from titles
+order by emp_no DESC
+limit 10;
+
+select*from dept_emp
+order by emp_no DESC;
+
+insert into dept_emp
+values ('999904', 'd0001', '1980-01-01', '9999-01-01');  
+
+
+insert into titles
+(emp_no, title, from_date)
+values (999903, 'Senior Engineer', '1997-10-01');
+
+select*from departments
+limit 10;
+
+create table departments_dup
+(
+	dept_no char(4) not null,
+    dept_name varchar(40) not null);
+    
+insert into departments_dup
+(	dept_no, dept_name)
+select* from departments;
+
+select*from departments_dup
+order by dept_no DESC;
+
+insert into departments_dup
+(	dept_name,
+	dept_no)
+values ('Business Analysis', 'd010');
+
+select*from departments_dup
+order by dept_no DESC;
+
+use employees;
+select*from employees
+order by emp_no asc;
+
+update employees
+set first_name='Stella',
+	last_name='Johns',
+    birth_date='1992-11-07',
+    gender='F'
+where emp_no='10001';
+
+select*from employees
+where emp_no='10006';
+
+
+select*from departments_dup
+order by dept_no;
+COMMIT;
+
+update departments_dup
+set dept_no='d011',
+	dept_name='Electrical Engineering';
+
+Rollback;
+Commit;
+
+update departments_dup
+set dept_no='d011',
+	dept_name='Electrical Engineering'
+where dept_no='d001';
+
+select*from departments;
+commit;
+
+update departments
+set dept_name='Data Analysis'
+where dept_name='Business Analysis';
+
+select*from departments
+where dept_name='data Analysis';
+
+use employees;
+
+select*from employees
+order by emp_no DESC;
+commit;
+
+select*from titles
+order by emp_no desc;
+
+insert into titles
+values ('999901', 'Senior Engineer', '1999-10-10', '9999-01-01');
+
+select*from employees
+where emp_no='999901';
+
+
+delete from employees
+where emp_no='999901';
+
+select*from departments_dup
+order by dept_no;
+
+commit;
+
+delete from departments_dup;
+
+delete from departments_dup
+where dept_no='d010';
+rollback;
+
+select*from salaries;
+
+select count(distinct salary)
+from salaries;
+
+select count(distinct from_date)
+from salaries;
+
+select count(*)
+from salaries;
+
+select*from departments;
+
+select count(distinct dept_name)
+from departments;
+
+select*from salaries;
+
+select sum(salary)
+from salaries;
+
+select sum(*)
+from salaries;
+
+select sum(salary)
+from salaries
+where from_date> '1997-01-01';
+
+select max(salary)
+from salaries;
+
+select min(salary) 
+from salaries;
+
+select max(emp_no)
+from salaries;
+
+select avg(salary)
+from salaries
+where from_date>'2000-01-01';
+
+select round(avg(salary))
+from salaries
+where from_date>'1997-01-01';
+
+select*from departments_dup;
+
+alter table departments_dup
+change column dept_name dept_name varchar(40) null;
+
+insert into departments_dup
+(dept_no)
+values ('d010'),('d011');
+
+alter table departments_dup
+add column dept_manager varchar(255) null after dept_name;
+commit;
+
+select dept_no,
+	ifnull (dept_name, "No values mentioned") as dept_name
+from departments_dup;
+
+select dept_no, dept_name,
+	coalesce( dept_manager, dept_name, "No value mentioned")
+from departments_dup;
+
+select dept_no, dept_name,
+	coalesce("department manager name") as fake_col
+from departments_dup;
+
+select dept_no, dept_name,
+	coalesce(dept_no, dept_name) as dept_info
+from departments_dup
+order by dept_no ASC;
+
+select 
+	ifnull(dept_no, 'N/A') as dept_no,
+    ifnull(dept_name, 'Dapartment name not provided') as dept_name,
+    coalesce(dept_no, dept_name) as dept_info
+from departments_dup;
+
+select 
+	coalesce (NULL, 'second', null) as coalesce_test;
+
+select
+	coalesce ('First', 'Second', 'Third') as coalesce_test;
+    
+select
+	coalesce ('First', null, 'Third') as coalesce_Test;
