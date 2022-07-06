@@ -535,3 +535,156 @@ where dept_no='d002';
 insert into departments_dup
 	(dept_no, dept_name)
 values ('d001', 'public relations');
+
+select*from departments_dup
+order by dept_no;
+
+select*from dept_manager_dup;
+
+
+ALTER TABLE departments_dup
+DROP COLUMN dept_manager;
+
+ 
+
+ALTER TABLE departments_dup
+CHANGE COLUMN dept_no dept_no CHAR(4) NULL;
+
+ 
+ALTER TABLE departments_dup
+CHANGE COLUMN dept_name dept_name VARCHAR(40) NULL;
+
+ 
+# if you don’t currently have ‘departments_dup’ set up
+
+DROP TABLE IF EXISTS departments_dup;
+
+CREATE TABLE departments_dup
+
+(
+
+    dept_no CHAR(4) NULL,
+
+    dept_name VARCHAR(40) NULL
+
+);
+
+ 
+
+INSERT INTO departments_dup
+
+(
+
+    dept_no,
+
+    dept_name
+
+)SELECT
+
+                *
+
+FROM
+
+                departments;
+
+ 
+
+INSERT INTO departments_dup (dept_name)
+
+VALUES                ('Public Relations');
+
+ 
+
+DELETE FROM departments_dup
+
+WHERE
+
+    dept_no = 'd002'; 
+
+   
+
+INSERT INTO departments_dup(dept_no) VALUES ('d010'), ('d011');
+
+DROP TABLE IF EXISTS dept_manager_dup;
+
+CREATE TABLE dept_manager_dup (
+
+  emp_no int(11) NOT NULL,
+
+  dept_no char(4) NULL,
+
+  from_date date NOT NULL,
+
+  to_date date NULL
+
+  );
+
+ 
+
+INSERT INTO dept_manager_dup
+select * from dept_manager;
+ 
+
+INSERT INTO dept_manager_dup (emp_no, from_date)
+
+VALUES                (999904, '2017-01-01'),
+
+                                (999905, '2017-01-01'),
+
+                               (999906, '2017-01-01'),
+
+                               (999907, '2017-01-01');
+
+ 
+
+DELETE FROM dept_manager_dup
+WHERE
+    dept_no = 'd001';
+
+INSERT INTO departments_dup (dept_name)
+VALUES                ('Public Relations');
+
+ 
+
+DELETE FROM departments_dup
+WHERE
+    dept_no = 'd002'; 
+
+select*from departments_dup;
+select*from dept_manager_dup;
+select*from employees;
+
+SELECT 
+    m.dept_no, m.emp_no, d.dept_name
+FROM
+    departments_dup d
+        inner JOIN
+    dept_manager_dup m ON d.dept_no= m.dept_no;
+    
+select m.emp_no, e.first_name, e.last_name, m.dept_no, m.from_date
+from dept_manager_dup m
+join employees e on m.emp_no=e.emp_no;
+
+
+SELECT 
+    e.emp_no, e.first_name, e.last_name, dm.dept_no, e.hire_date
+FROM
+    employees e
+        JOIN
+    dept_manager dm ON e.emp_no = dm.emp_no;
+    
+insert into dept_manager_dup
+values ('110228', 'd003', '1992-03-21', '9999-01-01');
+
+insert into departments_dup
+values ('d009', 'Customer Service');
+
+select*from dept_manager_dup
+order by dept_no ASC;
+select*from departments_dup
+order by dept_no ASC;
+
+select m.dept_no, m.emp_no, d.dept_name
+from dept_manager_dup as m
+join departments_dup as d on m.dept_no=d.dept_no
+order by m.dept_no;
