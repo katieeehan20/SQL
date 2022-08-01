@@ -24,6 +24,7 @@ create table Songs
     UpdatedAt DATETIME NULL
 );
 
+
 INSERT INTO User
 (	UserID,
 	FirstName,
@@ -83,7 +84,7 @@ where userid=100;
 
 select*from user;
 
-Begin transaction;
+Start transaction;
 Update User Set FirstName='Hey change my name back';
 Select*from User;
 Rollback;
@@ -110,6 +111,15 @@ insert into user
     CreatedAt)
 Values ('000105', 'Jason', 'McMurphy', 'Georgia', current_timestamp);
 
+insert into user
+(	UserID,
+	FirstName,
+	LastName,
+    Birthplace,
+    CreatedAt)
+Values ('000107', 'Mei', 'Loop', 'Jacksonville', current_timestamp);
+
+
 
 Start transaction;
 Delete from User where userid='105';
@@ -124,3 +134,64 @@ Delete from Songs where SongID>1000;
 select*from songs;
 Rollback;
 
+Select songs.AlbumID, songs.UserID AS ID 
+from songs
+JOIN User on user.userid=songs.userid
+group by songs.userid;
+
+select UserID, CreatedAt from songs
+union all
+select UserID, CreatedAt from user;
+
+select UserID, CreatedAt from user
+union 
+select UserID, CreatedAt from user;
+
+SELECT UserID, CreatedAt from user
+UNION 
+SELECT FirstName, LastName from user;
+
+select user.UserID,songs.artistid,user.CreatedAt from user
+join songs on
+songs.userid=user.userid;
+
+select *from user
+where userid
+Not In(
+select userid
+from user
+where userid='107');
+
+
+CREATE TEMPORARY TABLE MusicNames 
+(
+  MusicNameID INTEGER PRIMARY KEY NOT NULL,
+  ArtistName VARCHAR (256)NOT NULL,
+  SongID VARCHAR (256)NOT NULL,
+  AlbumID VARCHAR (256) NOT NULL,
+  GenreID VARCHAR (256)NOT NULL
+);
+
+
+SELECT * 
+FROM MusicNames mn
+INNER JOIN user ON mn.songid = user.userid; 
+
+drop table musicnames;
+
+insert into songs
+(FavoriteID, userid, artistid, songid, createdat)
+values('2005', '108', '308', '1010', current_timestamp);
+
+select distinct artistid from songs;
+select distinct songid from songs;
+
+select artistid, userid from songs
+order by artistid desc;
+
+select*from user
+order by lastname, userid asc;
+
+select songs.favoriteID, songs.userid, artistid from songs
+join user on user.userid=songs.userid
+order by songs.artistid desc;
