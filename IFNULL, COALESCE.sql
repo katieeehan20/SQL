@@ -128,3 +128,45 @@ WHERE dept_no='d002';
 
 SELECT*FROM dept_manager_dup;
 SELECT*FROM departments_dup;
+select*from employees;
+
+select dm.emp_no, e.first_name, e.last_name, dm.dept_no, dm.from_date
+from dept_manager_dup dm
+join employees e on dm.emp_no=e.emp_no;
+
+select dm.emp_no, e.first_name, e.last_name, dm.dept_no, dm.from_date
+from employees e
+left join dept_manager dm on e.emp_no=dm.emp_no
+where e.last_name='Markovitch'
+order by dm.dept_no DESC, e.emp_no;
+
+select e.emp_no, e.first_name, e.last_name, dm.dept_no, e.hire_date
+from employees e
+join dept_manager dm on e.emp_no=dm.emp_no;
+
+set @@global.sql_mode := replace(@@global.sql_mode, 'ONLY_FULL_GROUP_BY', '');
+
+
+select e.first_name, e.last_name, e.hire_date, t.title
+from employees e
+join titles t on e.emp_no=t.emp_no
+where e.first_name='Margareta' AND e.last_name='Markovitch'
+order by e.emp_no;
+
+select dm.emp_no, d.dept_no
+from  departments d
+cross join dept_manager dm
+where d.dept_no='d009'
+order by d.dept_no;
+
+select dm.*, d.*
+from dept_manager dm
+cross join departments d
+where d.dept_no='d009'
+order by d.dept_no;
+
+select e.*, d.*
+from employees e 
+cross join departments d
+order by e.emp_no, d.dept_name 
+limit 10;
