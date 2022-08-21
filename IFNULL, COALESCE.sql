@@ -170,3 +170,186 @@ from employees e
 cross join departments d
 order by e.emp_no, d.dept_name 
 limit 10;
+
+select*from departments;
+
+select e.first_name, e.last_name, e.hire_date, t.title, t.from_date, d.dept_no
+from employees e 
+join titles t on e.emp_no=t.emp_no
+join dept_emp d on e.emp_no=d.emp_no;
+
+select e.first_name, e.last_name, e.hire_date, t.title, m.from_date, d.dept_name
+from employees e
+join dept_manager m on e.emp_no=m.emp_no
+join departments d on m.dept_no=d.dept_no
+join titles t on e.emp_no=t.emp_no
+WHERE t.title='Manager'
+ORDER BY e.emp_no;
+
+select*from employees;
+select*from dept_manager;
+select*from titles
+where titles.title='manager';
+
+select count(e.gender)
+from employees e
+join dept_manager dm on e.emp_no=dm.emp_no
+join titles t on dm.emp_no=t.emp_no
+where e.gender='F' AND t.title='manager'
+order by e.emp_no;
+
+select e.gender, count(dm.emp_no)
+from employees e
+join dept_manager dm on e.emp_no=dm.emp_no
+group by gender;
+
+select*from
+(Select e.emp_no, e.first_name, e.last_name, null as dept_no, null as from_date
+FROM employees e
+WHERE last_name='Denis' UNION SELECT
+NULL AS emp_no,
+	Null as first_name,
+    NULL AS last_name,
+    dm.dept_no,
+    dm.from_date
+FROM dept_manager dm) as a
+ORDER BY -a.emp_no DESC;
+
+select*from dept_manager;
+select*from employees;
+
+select e.first_name, e.last_name
+from employees e
+where e.emp_no IN( 
+SELECT dm.emp_no
+FROM dept_manager dm); 
+
+select dm.emp_no
+from dept_manager dm;
+
+select e.hire_date
+from employees e
+where e.emp_no in(
+select dm.emp_no
+from dept_manager dm
+where e.hire_date>'1990-01-01' AND e.hire_date<'1995-01-01');
+
+select*from dept_manager
+where emp_no in (
+select emp_no 
+from employees e
+where hire_date >'1990-01-01' AND e.hire_date<'1995-01-01');
+
+select*from employees e
+where emp_no in (
+select emp_no 
+from titles t
+where e.emp_no=t.emp_no AND title="Assistant Engineer");
+
+select*from employees e
+where exists(
+select *from titles t
+where e.emp_no=t.emp_no AND t.title='Assistant Engineer');
+
+select emp_no
+from dept_manager 
+where emp_no =110022;
+
+SELECT 
+    A.*
+FROM
+    (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110022) AS manager_id
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no <= 10020
+    GROUP BY e.emp_no
+    ORDER BY e.emp_no) AS A 
+UNION SELECT 
+    B.*
+FROM
+    (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110039) AS manager_ID
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no > 10020
+    GROUP BY e.emp_no
+    ORDER BY e.emp_no
+    LIMIT 20) AS B;
+    
+DROP table if exists emp_manager;
+CREATE table emp_manager
+(emp_no int(11) not null,
+dept_no char(4) null,
+manager_no int(11) not null);
+
+INSERT INTO emp_manager 
+SELECT U.* FROM
+(SELECT A.* 
+FROM
+(SELECT e.emp_no as employee_ID,
+MIN(de.dept_no) AS department_code,
+(SELECT emp_no 
+FROM dept_manager
+WHERE emp_no=110022) AS manager_ID
+FROM employees e
+JOIN dept_emp de on e.emp_no=de.emp_no
+WHERE e.emp_no<=10020
+GROUP BY e.emp_no
+ORDER BY e.emp_no) AS A
+UNION
+SELECT B.*
+FROM
+(SELECT e.emp_no as employee_ID,
+MIN(de.dept_no) AS department_code,
+(SELECT emp_no
+FROM dept_manager
+WHERE emp_no=110039) AS manager_ID
+FROM employees e
+JOIN dept_emp de ON e.emp_no=de.emp_no
+WHERE e.emp_no >10020
+GROUP BY e.emp_no
+ORDER BY e.emp_no
+LIMIT 20) AS B
+UNION
+SELECT C.* FROM
+(SELECT e.emp_no AS employee_ID,
+MIN(de.dept_no) AS department_code,
+(SELECT emp_no
+FROM dept_manager
+WHERE emp_no=110039) AS manager_ID
+FROM employees e
+JOIN dept_emp de on e.emp_no=de.emp_no
+WHERE e.emp_no=110022
+GROUP BY e.emp_no
+ORDER BY e.emp_no) AS C
+UNION
+SELECT D.* FROM
+(SELECT e.emp_no AS employee_ID,
+MIN(de.dept_no) AS department_code,
+(SELECT emp_no
+FROM dept_manager
+WHERE emp_no=110022) AS manager_ID
+FROM employees e
+JOIN dept_emp de on e.emp_no=de.emp_no
+WHERE e.emp_no=110039
+GROUP BY e.emp_no
+ORDER BY e.emp_no) AS D) AS U;
