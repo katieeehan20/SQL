@@ -353,3 +353,73 @@ JOIN dept_emp de on e.emp_no=de.emp_no
 WHERE e.emp_no=110039
 GROUP BY e.emp_no
 ORDER BY e.emp_no) AS D) AS U;
+
+select*from emp_manager;
+
+select emp_no
+from dept_manager
+where emp_no=110022;
+
+select A.* from
+(select e.emp_no as employee_ID,
+MIN(de.dept_no) as department_code,
+(SELECT emp_no
+FROM dept_manager
+WHERE emp_no=110022) as manager_ID
+FROM employees e
+JOIN dept_emp de on e.emp_no=de.emp_no
+WHERE e.emp_no<10020
+GROUP BY e.emp_no
+ORDER BY e.emp_no) as A;
+
+///views///
+
+select DISTINCT e1.*
+from emp_manager e1
+join emp_manager e2 on e1.emp_no=e2.manager_no;
+
+select*from dept_emp;
+select emp_no, from_date, to_date, count(emp_no) as Num
+FROM dept_emp
+GROUP BY emp_no
+HAVING Num >1;
+
+CREATE OR REPLACE VIEW v_dept_emp_latest_date AS
+SELECT emp_no, MAX(from_date) AS from_date, MAX(to_date) AS to_date
+FROM dept_emp
+GROUP BY emp_no;
+
+select*from employees.v_dept_emp_latest_date;
+
+CREATE OR REPLACE VIEW v_salaries_avg AS
+SELECT round(avg(salary),2) as avg_salary
+from salaries s
+join dept_manager dm on s.emp_no=dm.emp_no;
+
+select*from employees.v_salaries_avg;
+
+use employees;
+
+DROP Procedure if exists select_employees;
+
+DELIMITER $$
+CREATE PROCEDURE select_employees()
+BEGIN
+SELECT * FROM employees
+LIMIT 1000;
+END $$
+
+call employees.select_employees();
+call select_employees();
+
+
+DELIMITER $$
+CREATE PROCEDURE avg_salary_employee()
+BEGIN
+SELECT avg(salary)
+FROM salaries;
+END $$
+
+call avg_salary_employee();
+
+drop procedure avg_salary_employees;
