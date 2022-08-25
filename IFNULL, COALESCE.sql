@@ -423,3 +423,54 @@ END $$
 call avg_salary_employee();
 
 drop procedure avg_salary_employees;
+
+use employees;
+drop procedure if exists emp_salary;
+
+DELIMITER $$
+use employees $$
+CREATE PROCEDURE emp_salary (IN p_emp_no INTEGER)
+BEGIN
+SELECT
+	e.first_name, e.last_name, s.salary, s.from_date, s.to_date
+FROM employees e
+JOIN salaries s ON e.emp_no=s.emp_no
+WHERE e.emp_no = p_emp_no;
+END $$
+
+CREATE PROCEDURE emp_avg_salary (IN p_emp_no INTEGER)
+BEGIN
+SELECT
+	e.first_name, e.last_name, avg(s.salary)
+FROM employees e
+JOIN salaries s ON e.emp_no=s.emp_no
+WHERE e.emp_no = p_emp_no;
+END $$
+
+call emp_avg_salary(11300);
+
+DROP PROCEDURE IF EXISTS emp_avg_salary_out;
+
+DELIMITER $$
+CREATE PROCEDURE emp_Avg_salary_out(in p_emp_no INTEGER, out p_avg_salary DECIMAL(10,2))
+BEGIN
+SELECT
+	AVG(s.salary)
+INTO p_avg_salary FROM
+	employees e
+JOIN
+	salaries s ON e.emp_no=s.emp_no
+WHERE
+	e.emp_no=p_emp_no;
+END$$
+
+DELIMITER $$
+CREATE PROCEDURE emp_info (in p_first_name varchar(16), in p_last_name varchar(16), out p_emp_no integer)
+BEGIN
+SELECT e.emp_no
+FROM employees e
+WHERE e.first_name=p_first_name AND e.last_name=p_last_name
+LIMIT 1000;
+END $$
+
+DROP PROCEDURE IF EXISTS emp_info;
